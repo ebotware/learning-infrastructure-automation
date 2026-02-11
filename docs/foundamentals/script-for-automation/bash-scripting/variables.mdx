@@ -1,0 +1,213 @@
+# Bash Scripting – Fondamentali (Variabili, Condizioni, Loop, Funzioni)
+
+**Variabili in Bash**
+
+Dichiarazione e assegnazione (senza spazi attorno al =):
+
+```bash
+NOME="Valore"
+CONTATORE=42
+PERCORSO=/var/www/html
+```
+
+Accesso al valore (sempre con $ tranne in pochi casi specifici):
+
+```bash
+echo "$NOME"
+echo "Il valore è: $CONTATORE"
+echo "Percorso: ${PERCORSO}/index.html"
+```
+
+Differenza tra virgolette:
+
+```bash
+echo $NOME          # word splitting + globbing
+echo "$NOME"        # valore preservato
+echo '${NOME}'      # letterale, non espande
+```
+
+Variabili speciali predefinite:
+
+```bash
+$0          # nome dello script
+$1 $2 …     # parametri posizionali
+$#          # numero di parametri
+$@          # tutti i parametri (array – preservati)
+$*          # tutti i parametri (stringa unica)
+$?          # exit status dell’ultimo comando
+$$          # PID dello script corrente
+```
+
+Variabili di sola lettura e variabili locali nelle funzioni:
+
+```bash
+readonly COSTANTE="valore fisso"
+declare -r COSTANTE="valore fisso"
+
+local VAR_LOCALE="solo nella funzione"
+```
+
+**Condizioni (test)**
+
+Struttura base if:
+
+```bash
+if [ condizione ]; then
+    comandi
+elif [ altra_condizione ]; then
+    altri_comandi
+else
+    comandi_default
+fi
+```
+
+Test numerici (usare (( )) per maggiore leggibilità):
+
+```bash
+if (( CONTATORE > 10 )); then
+    echo "Maggiore di 10"
+fi
+
+# oppure con [ ] (vecchio stile – attenzione agli spazi)
+if [ "$ETA" -ge 18 ]; then
+    echo "Maggiorenne"
+fi
+```
+
+Test sulle stringhe:
+
+```bash
+[ "$VAR" = "valore" ]       # uguale
+[ "$VAR" != "valore" ]      # diverso
+[ -z "$VAR" ]               # vuota / lunghezza zero
+[ -n "$VAR" ]               # NON vuota
+[[ $VAR == pattern* ]]      # pattern matching (preferibile)
+[[ $VAR =~ ^[0-9]+$ ]]      # regex (doppia parentesi quadra)
+```
+
+Test su file / directory:
+
+```bash
+[ -f "$FILE" ]      # esiste ed è file regolare
+[ -d "$DIR" ]       # esiste ed è directory
+[ -e "$PERCORSO" ]  # esiste (file o dir o link…)
+[ -r "$FILE" ]      # leggibile
+[ -w "$FILE" ]      # scrivibile
+[ -x "$FILE" ]      # eseguibile
+[ "$FILE1" -nt "$FILE2" ]   # più recente (newer than)
+```
+
+**Costrutti di loop**
+
+```bash
+# for classico (lista di parole)
+for item in uno due tre "quattro cinque"; do
+    echo "→ $item"
+done
+
+# for su risultati di comando (preferire while read quando possibile)
+for file in *.log; do
+    echo "Processo: $file"
+done
+
+# for in stile C (Bash 3+)
+for (( i=1; i<=10; i++ )); do
+    echo "$i"
+done
+```
+
+```bash
+# while – continua finché la condizione è vera
+while [ "$CONTATORE" -lt 5 ]; do
+    echo "$CONTATORE"
+    ((CONTATORE++))
+done
+
+# while con input (pattern molto comune)
+while IFS= read -r linea; do
+    echo "→ $linea"
+done < "file.txt"
+```
+
+```bash
+# until = finché la condizione è falsa
+until (( CONTATORE > 100 )); do
+    ((CONTATORE *= 2))
+    echo "$CONTATORE"
+done
+```
+
+**Funzioni**
+
+Definizione:
+
+```bash
+nome_funzione() {
+    comandi
+    # return 0    # esplicito (opzionale – default è $? dell’ultimo comando)
+}
+```
+
+Chiamata:
+
+```bash
+nome_funzione
+nome_funzione arg1 arg2
+```
+
+Parametri all’interno della funzione:
+
+```bash
+saluta() {
+    local nome="$1"
+    local ora=$(date +%H)
+
+    if (( ora < 12 )); then
+        echo "Buongiorno $nome"
+    else
+        echo "Buonasera $nome"
+    fi
+}
+```
+
+Valori di ritorno (convenzione – 0 = successo):
+
+```bash
+controlla_file() {
+    local path="$1"
+    if [ -f "$path" ] && [ -r "$path" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+if controlla_file "/etc/passwd"; then
+    echo "File ok"
+else
+    echo "Problema con il file"
+fi
+```
+
+Output catturabile in variabile:
+
+```bash
+crea_report() {
+    echo "Report generato il $(date)"
+    echo "Utenti attivi: $(who | wc -l)"
+}
+
+RISULTATO=$(crea_report)
+echo "$RISULTATO"
+```
+
+**Buone pratiche consigliate**
+
+- Usare sempre le virgolette attorno alle variabili: `"$VAR"`
+- Preferire `[[ … ]]` invece di `[ … ]` quando possibile
+- Usare `(( … ))` per confronti numerici
+- Dichiarare `local` nelle variabili delle funzioni
+- Controllare sempre `$?` dopo comandi critici o usare `set -euo pipefail`
+- Evitare `for var in $(comando)` quando possibile → preferire `while read` o `find -exec`
+
+Queste strutture rappresentano il nucleo della programmazione procedurale in Bash.

@@ -1,0 +1,41 @@
+---
+sidebar_position: 2
+---
+
+# Fondamenti di Python
+
+
+## Cos'è l'interprete Python
+Un interprete Python prende il codice scritto e lo converte in un linguaggio che l'hardware è in grado di comprendere.
+Questo processo viene fatto ogni volta che uno script viene eseguito.
+
+## Implementazioni Python
+Ci sono diversi interpreti Python
+
+* CPython - Implementazione in C di Python
+* Jython - inteprete in Java
+* PyPy - Scritto in Python ??
+* IronPython - Per piattaforme .Net
+* MicroPython - Per microcontrollori
+
+## Come Python esegue uno script
+1. Processa gli statements in uno script, controllando che la sintassi sia corretta
+2. Compila il source in bytecode (codice platform indipendent)
+3. Invia il codice per essere eseguito alla Python Virtual Machine
+
+## Modules vs Scripts
+* Scripts sono "top-level" files, destinati all'esecuzione da parte dell'utente
+* Moduli sono creati per essere importati
+
+## Running Python Code Interactively
+In Linux, per eseguire Python da terminale digitare `python3`. Ad esempio:
+```py
+>>> print("Hello World!")
+Hello World!
+>>> 2 + 5
+7
+>>> a = "Hi!"
+>>> print(a)
+Hi!
+>>> exit()
+```

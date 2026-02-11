@@ -1,0 +1,193 @@
+---
+sidebar_position: 2
+---
+
+# Subnetting e CIDR Notation
+
+Nella progettazione delle reti informatiche è fondamentale gestire in modo efficiente gli indirizzi IP. A questo scopo vengono utilizzati il **subnetting** e la **notazione CIDR**.
+
+Il **subnetting** è la tecnica che consente di suddividere una rete IP in più sottoreti più piccole. Questo permette di organizzare meglio la rete, ridurre il traffico di broadcast e migliorare sicurezza ed efficienza. Ogni sottorete possiede un proprio intervallo di indirizzi IP, identificato da una subnet mask.
+
+La **notazione CIDR (Classless Inter-Domain Routing)** è un metodo moderno per rappresentare indirizzi IP e subnet mask in forma compatta. Essa utilizza il formato *indirizzo IP/numero di bit*, dove il numero indica quanti bit sono dedicati alla parte di rete. La CIDR supera il vecchio sistema a classi, permettendo una gestione più flessibile e precisa degli indirizzi IP.
+
+## Subnetting
+
+**Il subnetting** è una delle cose più fondamentali quando si studia il networking.
+
+In parole semplicissime:
+
+> Il **subnetting** significa **prendere una rete grande** e suddividerla in **reti più piccole** (chiamate **sottoreti** o **subnet**).
+
+Perché lo facciamo? Principalmente per tre motivi:
+
+1. Ridurre il **broadcast domain** (meno collisioni, meno traffico inutile)
+2. Migliorare la **sicurezza** e l’**organizzazione** (es. reparto vendite separato da reparto IT)
+3. Risparmiare indirizzi IP (soprattutto in passato, ma ancora oggi con IPv4 privato)
+
+### Come si fa in pratica? (il concetto base)
+
+Un indirizzo IP è formato da **32 bit**:
+
+- una parte dice **“a quale rete appartengo”** → **network portion**
+- una parte dice **“chi sono dentro quella rete”** → **host portion**
+
+La **subnet mask** (o la notazione /CIDR) ci dice **dove finisce la parte rete e inizia la parte host**.
+
+Esempio classico:
+
+```
+Rete originale: 192.168.10.0 /24
+Maschera:       255.255.255.0     → 24 bit di rete, 8 bit per gli host
+Host disponibili: 256 − 2 = 254
+```
+
+Ora vogliamo dividere questa rete in **4 sottoreti**.
+
+Dobbiamo “rubare” bit alla parte host per farli diventare parte della rete.
+
+Ogni bit rubato **raddoppia** il numero di sottoreti possibili.
+
+| Bit rubati | Sottoreti possibili | Host per subnet (utili) | Nuova maschera     | Esempio intervalli                  |
+|------------|----------------------|---------------------------|---------------------|--------------------------------------|
+| 0          | 1                    | 254                       | /24                 | 192.168.10.0 – .255                 |
+| **2**      | **4**                | **62**                    | **/26**             | .0–63 / .64–127 / .128–191 / .192–255 |
+| 3          | 8                    | 30                        | /27                 | —                                    |
+| 4          | 16                   | 14                        | /28                 | —                                    |
+| 5          | 32                   | 6                         | /29                 | —                                    |
+| 6          | 64                   | 2                         | /30                 | punto-punto (WAN link)              |
+
+Quindi per fare 4 subnet → **rubiamo 2 bit** → maschera diventa **/26** (255.255.255.192)
+
+Le quattro subnet saranno:
+
+1. 192.168.10.**0**/26    → range: 192.168.10.1 – 192.168.10.62  
+2. 192.168.10.**64**/26   → range: 192.168.10.65 – 192.168.10.126  
+3. 192.168.10.**128**/26  → range: 192.168.10.129 – 192.168.10.190  
+4. 192.168.10.**192**/26  → range: 192.168.10.193 – 192.168.10.254  
+
+(Ricorda: il primo indirizzo è **network**, l’ultimo è **broadcast** → non usabili per host)
+
+### Tabella riassuntiva 
+
+| /CIDR | Maschera decimale     | Bit host | Host utilizzabili | Incremento (blocco) |
+|-------|------------------------|----------|-------------------|----------------------|
+| /24   | 255.255.255.0          | 8        | 254               | 1                    |
+| /25   | 255.255.255.128        | 7        | 126               | 128                  |
+| /26   | 255.255.255.192        | 6        | 62                | 64                   |
+| /27   | 255.255.255.224        | 5        | 30                | 32                   |
+| /28   | 255.255.255.240        | 4        | 14                | 16                   |
+| /29   | 255.255.255.248        | 3        | 6                 | 8                    |
+| /30   | 255.255.255.252        | 2        | 2                 | 4                    |
+| /31   | 255.255.255.254        | 1        | 0* (point-to-point) | 2                 |
+| /32   | 255.255.255.255        | 0        | 1 (host singolo)   | —                    |
+
+### Due tipi principali oggi
+
+- **FLSM** (Fixed Length Subnet Mask)  
+  → tutte le subnet hanno la **stessa dimensione** (metodo classico, più semplice)
+
+- **VLSM** (Variable Length Subnet Mask)  
+  → ogni subnet può avere una **dimensione diversa** (molto più efficiente, quasi sempre quello che si usa nella realtà)
+
+
+## Notazione CIDR
+CIDR notation is a compact representation of an IP address and its associated subnet mask. 
+The notation was invented by Phil Karn in the 1980s. 
+CIDR notation specifies an IP address, a slash character `/`, and a decimal number. The decimal number is the count of consecutive leading 1 bits (from left to right) in the network mask. **Each 1 bit denotes a bit of the address range which must remain identical to the given IP address**. The IP address in CIDR notation is always represented according to the standards for IPv4 or IPv6.
+
+For example:
+
+`198.51.100.14/24` is **CIDR notation** (Classless Inter-Domain Routing).  
+It is a compact way to write both:
+
+- an **IP address**, and
+- the **size of the network** it belongs to
+
+at the same time.
+
+| Part                 | Value              | Meaning                                                                                    |
+|----------------------|--------------------|--------------------------------------------------------------------------------------------|
+| IP address           | `198.51.100.14`    | This is a specific host address (one computer / device / interface)                        |
+| Slash number         | `/24`              | This tells us the **network prefix length** — how many bits are fixed for the network part |
+| Network prefix       | `198.51.100.0`     | The actual network address (all host bits set to 0)                                        |
+| Subnet mask          | `255.255.255.0`    | The old-fashioned way of writing the same boundary                                         |
+| Number of fixed bits | `24`               | First 24 bits = network part, last 8 bits = host part                                      |
+
+### Visual explanation – the 32 bits of an IPv4 address
+
+An IPv4 address is always 32 bits long.
+
+```
+198.51.100.14    →    11000110 . 00110011 . 01100100 . 00001110    (in binary)
+/24 means:            ████████   ████████   ████████    
+```
+
+
+L’uso combinato di subnetting e CIDR consente una distribuzione ottimale degli indirizzi IP e una progettazione delle reti più scalabile ed efficiente.
+
+
+## Esempio riassuntivo
+
+Scenario aziendale piccolo:
+
+Si ha a disposizione la rete:  
+**192.168.10.0/24**  (cioè 256 indirizzi totali)
+
+Bisogna creare 3 reparti con esigenze diverse:
+
+- Reparto Vendite: **60** computer  
+- Reparto Amministrazione: **20** computer  
+- Link punto-punto tra due router: **2** indirizzi
+
+**Soluzione con VLSM**:
+
+1. Ordinamento delle reti **dal fabbisogno più grande al più piccolo**  
+
+   | Reparto          | Host necessari | Host + 2 (net+bcast) | Potenza di 2 più vicina | Bit host | Subnet Mask | Dimensione blocco |
+   |------------------|----------------|-----------------------|--------------------------|----------|-------------|-------------------|
+   | Vendite          | 60             | 62                    | 64 = 2⁶                  | 6        | /26         | 64 indirizzi      |
+   | Amministrazione  | 20             | 22                    | 32 = 2⁵                  | 5        | /27         | 32 indirizzi      |
+   | Link router      | 2              | 2                     | 4  = 2²                  | 2        | /30         | 4 indirizzi       |
+
+
+2. Assegnamento delle sottoreti partendo dalla più grande alla più piccola:
+
+   - **Vendite** (/26 → 64 indirizzi)
+
+     Rete: **192.168.10.0/26**  
+     Maschera: 255.255.255.192  
+     Range host: 192.168.10.1 – 192.168.10.62  
+     Broadcast: 192.168.10.63
+
+   - **Amministrazione** (/27 → 32 indirizzi)  
+     Parte subito dopo la precedente (192.168.10.64)
+
+     Rete: **192.168.10.64/27**  
+     Maschera: 255.255.255.224  
+     Range host: 192.168.10.65 – 192.168.10.94  
+     Broadcast: 192.168.10.95
+
+   - **Link router** (/30 → 4 indirizzi)  
+     Parte dopo l'ultima usata (192.168.10.96)
+
+     Rete: **192.168.10.96/30**  
+     Maschera: 255.255.255.252  
+     Range host: 192.168.10.97 – 192.168.10.98  
+     Broadcast: 192.168.10.99
+
+**Risultato finale – schema indirizzi VLSM:**
+
+```
+192.168.10.0/24 (rete originale)
+
+├── 192.168.10.0/26     → Vendite        (62 host utilizzabili)
+│   └─ Range: .1 – .62
+
+├── 192.168.10.64/27    → Amministrazione (30 host utilizzabili)
+│   └─ Range: .65 – .94
+
+└── 192.168.10.96/30    → Link router     (2 host utilizzabili)
+    └─ Range: .97 – .98
+```
+
+Rimangono ancora liberi ≈ 156 indirizzi (da 192.168.10.100 in poi) che è possibile utilizzare in futuro per altre sottoreti.

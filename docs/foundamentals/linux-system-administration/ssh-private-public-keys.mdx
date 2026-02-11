@@ -1,0 +1,104 @@
+---
+sidebar_position: 4
+---
+
+
+# SSH: Chiavi pubbliche/private e tunneling
+
+### Cos'è SSH?
+**SSH (Secure Shell)** è un protocollo per connettersi in modo sicuro a un altro computer attraverso una rete (di solito internet). Cripta tutto: comandi, password e dati.
+
+Uso tipico:
+```bash
+ssh utente@server
+```
+
+### Chiavi pubbliche e private (Autenticazione con chiavi SSH)
+SSH può autenticarti usando **chiavi crittografiche** invece delle password.
+
+#### La coppia di chiavi
+Le chiavi vergono normalmente generate in coppia: 
+* **Chiave privata**
+  * Rimane solo sulla *tua* macchina  
+  * Segreta, non va mai condivisa  
+  * Esempi: `id_rsa`, `id_ed25519`
+
+* **Chiave pubblica**  
+  * Si può condividere "tranquillamente"  
+  * Viene caricata sul server  
+  * Esempio: `id_rsa.pub`
+
+Le due chiavi sono legate matematicamente.
+
+#### Come funziona l'autenticazione
+1. L'utente tenta di connetterti via SSH al server  
+2. Il server vede la **chiave pubblica** all'utente
+3. Il server invia una sfida (challenge) che può essere risolta unicamente se si è in possesso della chiave privata
+4. La **chiave privata** dimostra che si è gli autori della chiave pubblica  
+
+#### Perché le chiavi sono meglio delle password
+* Resistenti agli attacchi brute-force  
+* Possono essere protette con una passphrase  
+* Facili da revocare  
+* Permettono l'automazione (CI/CD, script, ecc.)
+
+### Generazione chiavi SSH
+
+Esempio generazione chiavi SSH in Linux (testato su Ubuntu 20.04)
+
+1. Generare chiavi ssh (normalmente verranno generati in ~/.ssh)
+    ```bash
+    ssh-keygen -t ed25519 -C "un commento non usato programmaticamente"
+    ```
+2. Avvio agent ssh e configurazione all'utilizzo nella corrente shell 
+    ```bash
+    eval "$(ssh-agent -s)"
+    ```
+3. Aggiunta chiavi ssh all'agent
+    ```bash
+    ssh-add ~/.ssh/id_ed25519
+    ```
+4. (Opzionale) Visualizzazione chiave pubblica
+    ```bash
+    cat ~/.ssh/id_ed25519.pub
+    ```
+
+### Tunneling SSH (Port Forwarding)
+Il **tunneling SSH** ti permette di instradare altro traffico di rete *attraverso* una connessione SSH criptata.  
+Pensa a un **tubo sicuro** all'interno di SSH.
+
+#### Perché usare il tunneling?
+* Accedere in modo sicuro a servizi interni/privati  
+* Criptare il traffico su reti non sicure (es. Wi-Fi pubblici)  
+* Superare firewall in sicurezza  
+* Usare servizi come se fossero locali
+
+### Tipi di tunneling SSH
+
+#### 1. Local Port Forwarding
+Accedere a un **servizio remoto** tramite una **porta locale**
+```bash
+ssh -L 8080:server-interno:80 utente@server-ssh
+```
+* `8080` → sulla macchina locale  
+* `server-interno:80` → destinazione remota  
+* Utile per database, web app interne, ecc.
+
+Navigando all'indirizzo `localhost:8080` sul browser/computer → il traffico passa attraverso il tunnel SSH fino al server remoto.
+
+#### 2. Remote Port Forwarding
+Esposizione di un **servizio locale** su una **macchina remota**
+```bash
+ssh -R 9000:localhost:3000 utente@server-ssh
+```
+* Rende l'app locale visibile sul server remoto (es. sulla porta 9000)  
+* Molto usato per demo, webhook, superare NAT
+
+#### 3. Dynamic Port Forwarding (Proxy SOCKS)
+SSH diventa una sorta di VPN leggera
+```bash
+ssh -D 1080 utente@server-ssh
+```
+* Crea un proxy SOCKS su `localhost:1080`  
+* Browser o applicazioni possono instradare il traffico dinamicamente attraverso il tunnel  
+* Ottimo per navigare in sicurezza o per routing flessibile

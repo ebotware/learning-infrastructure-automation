@@ -1,0 +1,48 @@
+---
+sidebar_position: 3
+---
+
+# Systemd, systemctl e gestione dei servizi
+Informazioni essenziali per gestire i servizi in Linux
+
+### systemd
+* **Cos'è:** Il sistema di init e service management del sistema.  
+* **Cosa fa:**  
+  * Avvia il sistema (PID 1)  
+  * Avvia e ferma i servizi  
+  * Gestisce dipendenze, socket, timer, mount, ecc.  
+
+### systemctl
+* **Cos'è:** Lo strumento da riga di comando per comunicare con systemd.  
+* **Cosa fa:** Invia comandi **a** systemd.  
+
+### Esempi comuni
+```bash
+# In questi esempi è stato usato nginx come servizio d'esempio
+
+# Avvia un servizio
+systemctl start nginx
+
+# Ferma un servizio
+systemctl stop nginx
+
+# Mostra lo stato del servizio
+systemctl status nginx
+
+# Fai partire il servizio automaticamente all'avvio
+systemctl enable nginx
+
+# Non far partire il servizio automaticamente all'avvio
+systemctl disable nginx
+
+# Controlla se il servizio parte in automatico all'avvio
+systemctl is-enabled nginx
+
+# Nega l'avvio del servizio in ogni caso
+systemctl mask nginx
+
+# Undo del comando per negare l'avvio del servizio
+systemctl unmask nginx
+```
+
+In tutti questi casi è **systemctl** che dice a **systemd** cosa fare.

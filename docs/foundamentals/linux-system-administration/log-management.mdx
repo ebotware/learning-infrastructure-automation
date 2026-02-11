@@ -1,0 +1,127 @@
+---
+sidebar_position: 5
+---
+
+# Log management
+
+## Where Linux logs live
+
+Most traditional logs are plain text under:
+
+```
+/var/log/
+```
+
+Common ones you’ll see everywhere:
+
+* `syslog` or `messages` – general system activity
+* `auth.log` / `secure` – logins, sudo, SSH
+* `kern.log` – kernel messages
+* `boot.log` – boot process
+* App-specific dirs: `nginx/`, `apache2/`, `mysql/`, etc.
+
+Quick peek:
+
+```bash
+ls -lh /var/log
+```
+
+---
+
+## Viewing logs
+
+Old school method:
+
+```bash
+tail -f /var/log/syslog
+```
+Print the last 10 lines of each FILE to std. output. With `-f` parameter, output appened data as the file grow.
+
+```bash
+grep ssh /var/log/auth.log # Filter the results
+```
+
+### Journal-based systems (systemd):
+
+Journalctl of a specific service (`cbram`) and follow
+
+```bash
+journalctl -u cbram -f
+```
+Journalctl of the last hour
+```bash
+journalctl --since "1 hour ago"
+journalctl -u cbram -S "1 hour ago"
+```
+On modern distros, `journalctl` is often **more important than /var/log**.
+
+
+## Log rotation
+
+Handled by **logrotate**.
+
+Config locations:
+
+* Global: `/etc/logrotate.conf`
+* Per-app: `/etc/logrotate.d/*`
+
+Example:
+
+```conf
+/var/log/nginx/*.log {
+  daily
+  rotate 14
+  compress
+  missingok
+  notifempty
+}
+```
+
+Manual test:
+
+```bash
+logrotate -d /etc/logrotate.conf
+```
+
+## Centralized log management
+
+For multiple servers or serious monitoring:
+
+### Common stacks
+
+* **ELK / OpenSearch** (Elasticsearch + Logstash + Kibana)
+* **Grafana + Loki**
+* **Graylog**
+* **Splunk** (paid)
+
+Flow usually looks like:
+
+```
+App → File / journal → Agent → Central server → Search + dashboards
+```
+
+Agents:
+
+* `rsyslog`
+* `filebeat`
+* `fluent-bit`
+* `vector`
+
+---
+
+## 6. Log levels (important for sanity)
+
+Standard levels you’ll see:
+
+* `DEBUG`
+* `INFO`
+* `NOTICE`
+* `WARNING`
+* `ERROR`
+* `CRITICAL`
+
+Filtering example:
+
+```bash
+journalctl -p err
+```

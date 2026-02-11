@@ -1,0 +1,44 @@
+---
+sidebar_position: 5
+---
+
+# Load Balancing
+
+Il **Load Balancing** (bilanciamento del carico) è la tecnica di distribuire in modo intelligente il traffico in arrivo (richieste HTTP, connessioni TCP, query gRPC, ecc.) su più server backend, in modo da:  
+- evitare il sovraccarico di un singolo server  
+- migliorare **performance**, **scalabilità** e **disponibilità**  
+- garantire continuità del servizio anche in caso di guasti
+
+Il load balancer si pone come intermediario (spesso come **reverse proxy**) tra i client e i server applicativi.
+
+## Principali Obiettivi del Load Balancing
+
+| Obiettivo              | Descrizione                                                                 | Impatto business                          |
+|-----------------------|-----------------------------------------------------------------------------|--------------------------------------------|
+| Scalabilità orizzontale | Aggiungere più server invece di potenziare uno solo                          | Costi più prevedibili, scaling più rapido |
+| Alta disponibilità     | Se un server muore, il traffico viene rediretto automaticamente             | Riduzione downtime                         |
+| Miglioramento performance | Riduzione latenza media e tempo di risposta                                 | Migliore UX                                |
+| Gestione picchi        | Assorbire traffico improvviso senza degradare il servizio                   | Black Friday, campagne marketing           |
+| Manutenzione senza outage | Rolling update / blue-green / canary senza interrompere gli utenti         | Deploy più sicuri                          |
+
+## Classificazione Principale dei Load Balancer
+
+| Livello OSI | Nome comune       | Cosa guarda                          | Velocità | Casi d’uso tipici                              | Esempi moderni                     |
+|-------------|-------------------|--------------------------------------|----------|------------------------------------------------|-------------------------------------|
+| Layer 4     | Transport / Network | IP + Port (TCP/UDP)                  | Molto veloce | Qualsiasi protocollo TCP/UDP, microservizi gRPC | AWS NLB, HAProxy (modalità TCP), Nginx Stream |
+| Layer 7     | Application       | Contenuto HTTP/2, gRPC, headers, cookie, path, host | Più lento (ma più intelligente) | Web, API REST, routing basato su contenuto | AWS ALB, Nginx, Traefik, Envoy, Cloudflare |
+
+**Nota aziendale frequente (2025–2026)**: la maggior parte delle nuove architetture cloud-native utilizza **Layer 7** per le API e **service mesh** (Istio, Linkerd) che includono load balancing avanzato.
+
+## Algoritmi di Load Balancing più comuni
+
+| Algoritmo                  | Tipo     | Come funziona                                      | Quando usarlo                                      | Limiti / Svantaggi                              |
+|----------------------------|----------|----------------------------------------------------|----------------------------------------------------|-------------------------------------------------|
+| **Round Robin**            | Statico  | Cicla tra i server in ordine fisso                 | Server tutti uguali, carico costante               | Non considera carico reale                      |
+| **Weighted Round Robin**   | Statico  | Assegna pesi (es. server A=5, B=2)                 | Server con capacità diversa                        | Non si adatta a cambiamenti improvvisi          |
+| **Least Connections**      | Dinamico | Invia al server con meno connessioni attive        | Richieste di durata variabile (molto usato)        | Non considera tempo di risposta                 |
+| **Weighted Least Connections** | Dinamico | Least Connections + pesi                       | Server eterogenei + durata variabile              | Calcolo più costoso                             |
+| **IP Hash**                | Statico  | Hash dell’IP client → stesso server sempre         | Session affinity / sticky sessions senza cookie    | Disbilanci se molti client da NAT / proxy       |
+| **Least Response Time**    | Dinamico | Invia al server con minor tempo di risposta        | Prestazioni utente critiche                        | Richiede monitoraggio costante                  |
+| **Random**                 | Statico  | Scelta casuale                                     | Test A/B o quando non serve prevedibilità          | Possibili squilibri temporanei                  |
+

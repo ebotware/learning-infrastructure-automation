@@ -1,0 +1,8 @@
+{
+  "label": "Linux system administration",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "description": "Prima di immergersi negli strumenti di automazione, è essenziale costruire solide basi su Linux, networking e scripting. Questa fase sfrutta il tuo background di programmazione per accelerare l'apprendimento."
+  }
+}
