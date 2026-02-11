@@ -1,19 +1,18 @@
-import {themes as prismThemes} from 'prism-react-renderer';
-import type {Config} from '@docusaurus/types';
+import { themes as prismThemes } from 'prism-react-renderer';
+import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'Infrastructure Automation',
-  tagline: 'Infrastructure Automation',
+  title: 'Learning Infrastructure Automation',
+  tagline: 'Raccolta di appunti riguardo il mio percorso di studio',
   favicon: 'img/favicon.ico',
-  deploymentBranch:"gh-pages",
+  deploymentBranch: "gh-pages",
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
     v4: true, // Improve compatibility with the upcoming Docusaurus v4
   },
-
   // Set the production url of your site here
   url: 'https://learning-infrastructure-automation.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
@@ -24,7 +23,7 @@ const config: Config = {
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'ebotware', // Usually your GitHub org/user name.
   projectName: 'learning-infrastructure-automation', // Usually your repo name.
-  
+
   onBrokenLinks: 'throw',
 
   // Even if you don't use internationalization, you can use this field to set
@@ -34,7 +33,7 @@ const config: Config = {
     defaultLocale: 'it',
     locales: ['it'],
   },
-  trailingSlash:false,
+  trailingSlash: false,
   presets: [
     [
       'classic',
@@ -46,7 +45,7 @@ const config: Config = {
           editUrl:
             'https://github.com/ebotware/learning-infrastructure-automation/tree/master/packages/create-docusaurus/templates/shared/',
         },
-        blog:false
+        blog: false
         /*,
         blog: {
           showReadingTime: true,
@@ -77,7 +76,7 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'Infrastructure Automation',
+      title: 'Learning Infrastructure Automation',
       logo: {
         alt: 'Infrastructure Automation Logo',
         src: 'img/logo.svg',
@@ -87,7 +86,7 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Documentazione',
+          label: 'Appunti',
         },
         //{to: '/blog', label: 'Blog', position: 'left'},
         {
@@ -104,43 +103,22 @@ const config: Config = {
           title: 'Docs',
           items: [
             {
-              label: 'Tutorial',
+              label: 'Appunti',
               to: '/docs/intro',
             },
           ],
-        },
-        {
-          title: 'Community',
-          items: [
-           /* {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-            },
-            {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
-            },
-            {
-              label: 'X',
-              href: 'https://x.com/docusaurus',
-            },*/
-          ],
         }
-        /*,{
+        , {
           title: 'More',
           items: [
             {
-              label: 'Blog',
-              to: '/blog',
-            },
-            {
               label: 'GitHub',
-              href: 'https://github.com/ebotware/docusaurus',
+              href: 'https://github.com/ebotware/learning-infrastructure-automation',
             },
           ],
-        },*/
+        },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Infrastructure Automation, Inc. Built with Docusaurus.`,
+      //copyright: `Copyright © ${new Date().getFullYear()} Learning Infrastructure Automation, Inc. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
