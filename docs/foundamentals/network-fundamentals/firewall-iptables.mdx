@@ -6,26 +6,21 @@ sidebar_position: 3
 
 Un **firewall** in Linux filtra i pacchetti di rete: decide quali connessioni sono permesse o bloccate in base a regole definite (IP sorgente, porta destinazione, protocollo, ecc.).
 
-**iptables**, **firewalld**, **ufw** controllano tutti il sistema di filtraggio pacchetti del kernel Linux (in passato **iptables**, oggi sempre più spesso **nftables** nel 2026), ma lo fanno con approcci, sintassi e livelli di complessità molto diversi.
+**iptables**, **firewalld**, **ufw** controllano tutti il sistema di filtraggio pacchetti su Linux, con alcune differenze.
 
 Differenze principali:
 
 |                  | **iptables**                              | **ufw** (Uncomplicated Firewall)          | **firewalld**                              |
 |-------------------------|--------------------------------------------|--------------------------------------------|---------------------------------------------|
 | **Tipo**                | Strumento CLI di basso livello             | Wrapper / frontend semplificato            | Demone dinamico + frontend                  |
-| **Backend attuale**     | Legacy (iptables-legacy o nftables)        | Di solito **nftables** (dal 2024+)         | Quasi sempre **nftables** (Fedora/RHEL)     |
-| **Curva di apprendimento** | Molto ripida                              | Molto facile                               | Media                                       |
+| **Backend attuale**     | Legacy (iptables-legacy o nftables)        | Di solito **nftables**         | Quasi sempre **nftables** (Fedora/RHEL)     |
 | **Preinstallato di default su** | Quasi tutte le distro Linux               | Ubuntu, Debian e derivate                  | Fedora, RHEL 8/9/10, Rocky, AlmaLinux       |
-| **Sintassi**            | Molto verbosa e complessa                  | Comandi in inglese semplice                | Pulita + concetto di zone + opzione GUI     |
-| **Regole dinamiche**    | No (devi salvare e ricaricare manualmente) | Sì (cambi immediati)                       | Sì (eccellente: runtime vs permanente)      |
-| **Zone / profili**      | No (devi creare chain manualmente)         | No (lista piatta + profili app)            | Sì (molto potente: trusted, public, internal, dmz, block, drop…) |
-| **Ideale per**          | Controllo massimo, scripting, server vecchi | Principianti, desktop, server semplici     | Server con più interfacce/reti, laptop che cambiano location |
-| **Stato nel 2026**      | **Legacy** — funziona ancora, ma molte distro usano nftables di default | Ancora molto usato e mantenuto             | Ancora molto usato e attivamente sviluppato |
+| **Ideale per**          | Controllo massimo, scripting, server datati | Principianti, desktop, server semplici     | Server con più interfacce/reti, laptop che cambiano location |
 | **GUI disponibile**     | No                                         | No (ma esiste gufw)                        | Sì (`firewall-config`, applet)              |
 
-### Esempi pratici – consentire SSH (porta 22) + server web (80+443)
+### Esempi pratici
 
-**iptables** (stile classico – molto verboso)
+**iptables** (stile classico, verboso)
 
 ```bash
 # IPv4
@@ -35,10 +30,10 @@ sudo iptables -A INPUT -p tcp --dport 443  -m conntrack --ctstate NEW,ESTABLISHE
 sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 sudo iptables -P INPUT DROP
 
-# Devi ancora salvare le regole (es. iptables-save > /etc/iptables/rules.v4)
+# Per applicare le regole occorre salvarle (es. iptables-save > /etc/iptables/rules.v4)
 ```
 
-**ufw** (pulito e semplice – stile Ubuntu)
+**ufw** (più semplice)
 
 ```bash
 sudo ufw allow OpenSSH       # oppure allow 22/tcp
@@ -48,7 +43,7 @@ sudo ufw enable
 sudo ufw status verbose
 ```
 
-**firewalld** (basato su zone – stile enterprise moderno)
+**firewalld** 
 
 ```bash
 # Aggiungi servizi alla zona attiva (di solito "public")
@@ -63,14 +58,3 @@ sudo firewall-cmd --reload
 
 sudo firewall-cmd --list-all
 ```
-
-### Quale scegliere nel 2026?
-
-| Situazione                                  | Scelta consigliata          | Perché |
-|---------------------------------------------|------------------------------|------|
-| Ubuntu / Pop!_OS / Linux Mint / Debian      | **ufw** (o gufw con interfaccia grafica) | È già presente, semplicissimo |
-| Fedora / RHEL / Rocky / AlmaLinux           | **firewalld**               | Predefinito, zone utilissime, integrazione perfetta |
-| Arch / Gentoo / NixOS / utente avanzato     | **nftables** diretto o firewalld/ufw | Backend più moderno |
-| Server molto vecchio (CentOS 7, Debian 9…)  | **iptables**                | Compatibilità |
-| Hai bisogno di controllo totale / chain custom | **nftables** o **iptables-legacy** | Nessun livello di astrazione |
-| Laptop che cambia spesso rete (casa, ufficio, caffè) | **firewalld**               | Le zone gestiscono automaticamente i contesti diversi |

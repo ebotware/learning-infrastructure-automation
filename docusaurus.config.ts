@@ -33,6 +33,7 @@ const config: Config = {
     defaultLocale: 'it',
     locales: ['it'],
   },
+  themes: ['@docusaurus/theme-mermaid'],
   trailingSlash: false,
   presets: [
     [
@@ -120,6 +121,7 @@ const config: Config = {
       ],
       //copyright: `Copyright © ${new Date().getFullYear()} Learning Infrastructure Automation, Inc. Built with Docusaurus.`,
     },
+  
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,

@@ -14,11 +14,9 @@ La **notazione CIDR (Classless Inter-Domain Routing)** è un metodo moderno per 
 
 **Il subnetting** è una delle cose più fondamentali quando si studia il networking.
 
-In parole semplicissime:
-
 > Il **subnetting** significa **prendere una rete grande** e suddividerla in **reti più piccole** (chiamate **sottoreti** o **subnet**).
 
-Perché lo facciamo? Principalmente per tre motivi:
+Perchè viene fatto? Principalmente per tre motivi:
 
 1. Ridurre il **broadcast domain** (meno collisioni, meno traffico inutile)
 2. Migliorare la **sicurezza** e l’**organizzazione** (es. reparto vendite separato da reparto IT)
@@ -91,40 +89,38 @@ Le quattro subnet saranno:
 
 
 ## Notazione CIDR
-CIDR notation is a compact representation of an IP address and its associated subnet mask. 
-The notation was invented by Phil Karn in the 1980s. 
-CIDR notation specifies an IP address, a slash character `/`, and a decimal number. The decimal number is the count of consecutive leading 1 bits (from left to right) in the network mask. **Each 1 bit denotes a bit of the address range which must remain identical to the given IP address**. The IP address in CIDR notation is always represented according to the standards for IPv4 or IPv6.
+La **notazione CIDR** è una rappresentazione compatta di un indirizzo IP e della relativa subnet mask.
+La notazione è stata inventata da Phil Karn negli anni '80.
+La notazione CIDR specifica un indirizzo IP, un carattere slash `/` e un numero decimale. Il numero decimale indica il conteggio dei bit consecutivi a 1 (da sinistra a destra) nella maschera di rete. **Ogni bit a 1 rappresenta un bit dell’intervallo di indirizzi che deve rimanere identico all’indirizzo IP specificato**.
+L’indirizzo IP in notazione CIDR è sempre rappresentato secondo gli standard IPv4 o IPv6.
 
-For example:
 
-`198.51.100.14/24` is **CIDR notation** (Classless Inter-Domain Routing).  
-It is a compact way to write both:
+Per esempio:
 
-- an **IP address**, and
-- the **size of the network** it belongs to
+`198.51.100.14/24` è in **notazione CIDR** (Classless Inter-Domain Routing).  
+È un modo compatto per scrivere allo stesso tempo:
 
-at the same time.
+- un **indirizzo IP**, e
+- la **grandezza della rete** al quale appartiene
 
-| Part                 | Value              | Meaning                                                                                    |
-|----------------------|--------------------|--------------------------------------------------------------------------------------------|
-| IP address           | `198.51.100.14`    | This is a specific host address (one computer / device / interface)                        |
-| Slash number         | `/24`              | This tells us the **network prefix length** — how many bits are fixed for the network part |
-| Network prefix       | `198.51.100.0`     | The actual network address (all host bits set to 0)                                        |
-| Subnet mask          | `255.255.255.0`    | The old-fashioned way of writing the same boundary                                         |
-| Number of fixed bits | `24`               | First 24 bits = network part, last 8 bits = host part                                      |
 
-### Visual explanation – the 32 bits of an IPv4 address
+| Parte                 | Valore             | Significato                                                                                 |
+|-----------------------|-------------------|--------------------------------------------------------------------------------------------|
+| Indirizzo IP          | `198.51.100.14`   | Questo è l’indirizzo di un host specifico (un computer / dispositivo / interfaccia)       |
+| Numero slash          | `/24`             | Indica la **lunghezza del prefisso di rete** — quanti bit sono fissi per la parte di rete  |
+| Prefisso di rete      | `198.51.100.0`    | L’indirizzo reale della rete                    |
+| Maschera di sottorete | `255.255.255.0`   | Il modo “vecchio stile” di rappresentare lo stesso limite                                 |
+| Numero di bit fissi   | `24`              | I primi 24 bit = parte di rete, gli ultimi 8 bit = parte host                               |
 
-An IPv4 address is always 32 bits long.
+
+### Rappresentazione grafica
+
+Un IPv4 ha sempre lunghezza 32 bit.
 
 ```
-198.51.100.14    →    11000110 . 00110011 . 01100100 . 00001110    (in binary)
-/24 means:            ████████   ████████   ████████    
+198.51.100.14    →    11000110 . 00110011 . 01100100 . 00001110    (in binario)
+/24              →    ████████   ████████   ████████    
 ```
-
-
-L’uso combinato di subnetting e CIDR consente una distribuzione ottimale degli indirizzi IP e una progettazione delle reti più scalabile ed efficiente.
-
 
 ## Esempio riassuntivo
 

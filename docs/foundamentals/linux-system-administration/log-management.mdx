@@ -4,114 +4,83 @@ sidebar_position: 5
 
 # Log management
 
-## Where Linux logs live
+La gestione dei log è fondamentale per monitorare, diagnosticare e mantenere la salute dei sistemi Linux. 
+I log registrano eventi di sistema, attività degli utenti, errori e informazioni delle applicazioni, consentendo agli amministratori di rilevare problemi, analizzare performance e garantire la sicurezza.
 
-Most traditional logs are plain text under:
+## Dove si trovano i log in Linux
+
+La maggior parte dei log tradizionali sono file di testo normale situati in:
 
 ```
 /var/log/
 ```
 
-Common ones you’ll see everywhere:
+Di cui tra i più importanti e noti:
 
-* `syslog` or `messages` – general system activity
-* `auth.log` / `secure` – logins, sudo, SSH
-* `kern.log` – kernel messages
-* `boot.log` – boot process
-* App-specific dirs: `nginx/`, `apache2/`, `mysql/`, etc.
+* `syslog` oppure `messages` – attività generale del sistema
+* `auth.log` / `secure` – accessi, sudo, SSH
+* `kern.log` – messaggi del kernel
+* `boot.log` – processo di avvio
 
-Quick peek:
-
-```bash
-ls -lh /var/log
-```
-
----
-
-## Viewing logs
-
-Old school method:
+## Visualizzare i log
+Metodo classico:
 
 ```bash
 tail -f /var/log/syslog
 ```
-Print the last 10 lines of each FILE to std. output. With `-f` parameter, output appened data as the file grow.
+Mostra le ultime 10 righe di ogni FILE sullo standard output. Con il parametro `-f`, continua a mostrare i dati che vengono aggiunti man mano che il file cresce.
 
 ```bash
-grep ssh /var/log/auth.log # Filter the results
+grep ssh /var/log/auth.log # Filtra i risultati
 ```
 
-### Journal-based systems (systemd):
+## Sistemi basati su journal (systemd):
 
-Journalctl of a specific service (`cbram`) and follow
+journalctl di un servizio specifico (`nginx`) e segui in tempo reale
 
 ```bash
-journalctl -u cbram -f
+journalctl -u nginx -f
 ```
-Journalctl of the last hour
+
+journalctl dell’ultima ora
+
 ```bash
 journalctl --since "1 hour ago"
 journalctl -u cbram -S "1 hour ago"
 ```
-On modern distros, `journalctl` is often **more important than /var/log**.
 
+## Rotazione dei log
+Gestita da **logrotate**.
 
-## Log rotation
+Posizioni dei file di configurazione:
 
-Handled by **logrotate**.
+* Globale: `/etc/logrotate.conf`
+* Per singola applicazione: `/etc/logrotate.d/*`
 
-Config locations:
-
-* Global: `/etc/logrotate.conf`
-* Per-app: `/etc/logrotate.d/*`
-
-Example:
-
+Esempio:
+File `/etc/logrotate.d/postgresql-common`
 ```conf
-/var/log/nginx/*.log {
-  daily
-  rotate 14
-  compress
-  missingok
-  notifempty
+/var/log/postgresql/*.log {
+       weekly
+       rotate 10
+       copytruncate
+       delaycompress
+       compress
+       notifempty
+       missingok
+       su root root
 }
 ```
 
-Manual test:
+Test manuale (dry-run):
 
 ```bash
 logrotate -d /etc/logrotate.conf
 ```
 
-## Centralized log management
+## Livelli di log 
 
-For multiple servers or serious monitoring:
-
-### Common stacks
-
-* **ELK / OpenSearch** (Elasticsearch + Logstash + Kibana)
-* **Grafana + Loki**
-* **Graylog**
-* **Splunk** (paid)
-
-Flow usually looks like:
-
-```
-App → File / journal → Agent → Central server → Search + dashboards
-```
-
-Agents:
-
-* `rsyslog`
-* `filebeat`
-* `fluent-bit`
-* `vector`
-
----
-
-## 6. Log levels (important for sanity)
-
-Standard levels you’ll see:
+Livelli standard:
 
 * `DEBUG`
 * `INFO`
@@ -120,8 +89,19 @@ Standard levels you’ll see:
 * `ERROR`
 * `CRITICAL`
 
-Filtering example:
+Esempio di filtro:
 
 ```bash
 journalctl -p err
+
 ```
+
+## Gestione centralizzata dei log
+La gestione centralizzata dei log permette di aggregare log proveniente da differenti sorgenti in una unica piattaforma, facilitandone il monitoraggio.
+
+Possibili soluzioni esistenti trovate su internet (non testate)
+* **Grafana + Loki** – Loki raccoglie i log, Grafana li visualizza in dashboard personalizzate. (molto popolare)
+* **ELK / OpenSearch** – Combina Elasticsearch (archiviazione e ricerca), Logstash (trasformazione dei log) e Kibana (visualizzazione).
+* **Graylog** – Piattaforma open-source per raccolta, analisi e allarmi sui log.
+* **Splunk** – Soluzione commerciale avanzata per raccolta, ricerca e analisi dei log.
+

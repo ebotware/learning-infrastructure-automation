@@ -1,213 +1,151 @@
 # Bash Scripting – Fondamentali (Variabili, Condizioni, Loop, Funzioni)
 
-**Variabili in Bash**
+Per imparare ed approfondire bash scripting è consigliata la seguente risorsa:
+[https://devhints.io/bash](https://devhints.io/bash). 
 
-Dichiarazione e assegnazione (senza spazi attorno al =):
+
+## Cheatsheet
+
+### 1. Struttura base
 
 ```bash
-NOME="Valore"
-CONTATORE=42
-PERCORSO=/var/www/html
+#!/bin/bash
+
+# Comment
+echo "Hello World"
+````
+
+Renderlo eseguibile
+
+```bash
+chmod +x script.sh
+./script.sh
 ```
 
-Accesso al valore (sempre con $ tranne in pochi casi specifici):
+### 2. Variabili
 
 ```bash
-echo "$NOME"
-echo "Il valore è: $CONTATORE"
-echo "Percorso: ${PERCORSO}/index.html"
+name="Alex"
+echo $name
+echo "${name}"
 ```
 
-Differenza tra virgolette:
+Leggere input utente
 
 ```bash
-echo $NOME          # word splitting + globbing
-echo "$NOME"        # valore preservato
-echo '${NOME}'      # letterale, non espande
+read -p "Enter your name: " name
 ```
 
-Variabili speciali predefinite:
+### 3. Positional Parameters (quando viene avviato lo script)
 
 ```bash
-$0          # nome dello script
-$1 $2 …     # parametri posizionali
-$#          # numero di parametri
-$@          # tutti i parametri (array – preservati)
-$*          # tutti i parametri (stringa unica)
-$?          # exit status dell’ultimo comando
-$$          # PID dello script corrente
+echo $0   # Script name
+echo $1   # First argument
+echo $2   # Second argument
+echo $#   # Number of arguments
+echo $@   # All arguments
 ```
 
-Variabili di sola lettura e variabili locali nelle funzioni:
+### 4. Condizioni
 
 ```bash
-readonly COSTANTE="valore fisso"
-declare -r COSTANTE="valore fisso"
-
-local VAR_LOCALE="solo nella funzione"
-```
-
-**Condizioni (test)**
-
-Struttura base if:
-
-```bash
-if [ condizione ]; then
-    comandi
-elif [ altra_condizione ]; then
-    altri_comandi
+if [ "$name" == "Alex" ]; then
+  echo "Hello Alex"
+elif [ "$name" == "Bob" ]; then
+  echo "Hello Bob"
 else
-    comandi_default
+  echo "Unknown user"
 fi
 ```
 
-Test numerici (usare (( )) per maggiore leggibilità):
+File checks:
 
 ```bash
-if (( CONTATORE > 10 )); then
-    echo "Maggiore di 10"
-fi
-
-# oppure con [ ] (vecchio stile – attenzione agli spazi)
-if [ "$ETA" -ge 18 ]; then
-    echo "Maggiorenne"
-fi
+[ -f file.txt ]   # File exists
+[ -d dir ]        # Directory exists
+[ -z "$var" ]     # Variable is empty
 ```
 
-Test sulle stringhe:
+### 5. Cicli (loops)
+
+#### Ciclo for
 
 ```bash
-[ "$VAR" = "valore" ]       # uguale
-[ "$VAR" != "valore" ]      # diverso
-[ -z "$VAR" ]               # vuota / lunghezza zero
-[ -n "$VAR" ]               # NON vuota
-[[ $VAR == pattern* ]]      # pattern matching (preferibile)
-[[ $VAR =~ ^[0-9]+$ ]]      # regex (doppia parentesi quadra)
-```
-
-Test su file / directory:
-
-```bash
-[ -f "$FILE" ]      # esiste ed è file regolare
-[ -d "$DIR" ]       # esiste ed è directory
-[ -e "$PERCORSO" ]  # esiste (file o dir o link…)
-[ -r "$FILE" ]      # leggibile
-[ -w "$FILE" ]      # scrivibile
-[ -x "$FILE" ]      # eseguibile
-[ "$FILE1" -nt "$FILE2" ]   # più recente (newer than)
-```
-
-**Costrutti di loop**
-
-```bash
-# for classico (lista di parole)
-for item in uno due tre "quattro cinque"; do
-    echo "→ $item"
-done
-
-# for su risultati di comando (preferire while read quando possibile)
-for file in *.log; do
-    echo "Processo: $file"
-done
-
-# for in stile C (Bash 3+)
-for (( i=1; i<=10; i++ )); do
-    echo "$i"
+for i in 1 2 3; do
+  echo $i
 done
 ```
 
-```bash
-# while – continua finché la condizione è vera
-while [ "$CONTATORE" -lt 5 ]; do
-    echo "$CONTATORE"
-    ((CONTATORE++))
-done
-
-# while con input (pattern molto comune)
-while IFS= read -r linea; do
-    echo "→ $linea"
-done < "file.txt"
-```
+#### Ciclo for su file
 
 ```bash
-# until = finché la condizione è falsa
-until (( CONTATORE > 100 )); do
-    ((CONTATORE *= 2))
-    echo "$CONTATORE"
+for file in *.txt; do
+  echo "$file"
 done
 ```
 
-**Funzioni**
-
-Definizione:
+#### While loop
 
 ```bash
-nome_funzione() {
-    comandi
-    # return 0    # esplicito (opzionale – default è $? dell’ultimo comando)
-}
+count=1
+while [ $count -le 5 ]; do
+  echo $count
+  ((count++))
+done
 ```
 
-Chiamata:
+### 6. Funzioni
 
 ```bash
-nome_funzione
-nome_funzione arg1 arg2
-```
-
-Parametri all’interno della funzione:
-
-```bash
-saluta() {
-    local nome="$1"
-    local ora=$(date +%H)
-
-    if (( ora < 12 )); then
-        echo "Buongiorno $nome"
-    else
-        echo "Buonasera $nome"
-    fi
-}
-```
-
-Valori di ritorno (convenzione – 0 = successo):
-
-```bash
-controlla_file() {
-    local path="$1"
-    if [ -f "$path" ] && [ -r "$path" ]; then
-        return 0
-    else
-        return 1
-    fi
+greet() {
+  echo "Hello $1"
 }
 
-if controlla_file "/etc/passwd"; then
-    echo "File ok"
-else
-    echo "Problema con il file"
-fi
+greet "Alex"
 ```
 
-Output catturabile in variabile:
+### 7. Codici uscita
 
 ```bash
-crea_report() {
-    echo "Report generato il $(date)"
-    echo "Utenti attivi: $(who | wc -l)"
-}
-
-RISULTATO=$(crea_report)
-echo "$RISULTATO"
+exit 0   # OK
+exit 1   # Errore
 ```
 
-**Buone pratiche consigliate**
+Controllo ultimo comando
 
-- Usare sempre le virgolette attorno alle variabili: `"$VAR"`
-- Preferire `[[ … ]]` invece di `[ … ]` quando possibile
-- Usare `(( … ))` per confronti numerici
-- Dichiarare `local` nelle variabili delle funzioni
-- Controllare sempre `$?` dopo comandi critici o usare `set -euo pipefail`
-- Evitare `for var in $(comando)` quando possibile → preferire `while read` o `find -exec`
+```bash
+echo $?  # Exit status
+```
 
-Queste strutture rappresentano il nucleo della programmazione procedurale in Bash.
+
+### 8. Operatori utili
+
+```bash
+&&   # Comando successio se ha successo
+||   # Comando successivo anche in caso di fallimento
+|    # Pipe output (Controllare cosa cambia tra Pipe, Redirect e Append)
+>    # Redirect output
+>>   # Append output
+```
+
+Esempio:
+
+```bash
+grep "error" log.txt | wc -l
+```
+
+### 9. Built-ins usati comunemente
+
+```bash
+echo
+read
+cd
+pwd
+export
+alias
+```
+
+
+
+
+

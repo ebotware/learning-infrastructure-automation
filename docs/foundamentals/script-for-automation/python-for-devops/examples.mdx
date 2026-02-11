@@ -1,0 +1,71 @@
+---
+sidebar_position: 199
+---
+
+# Esempi
+
+Raccolta di script usati nel quotidiano.
+
+
+## Wordpress - esegui docker-compose php + mysql stack
+Questo script crea una cartella wordpress e una catella db dove verranno salvati i volumi. Utile per impostare un ambiente di lavoro rapidamente ed isolato dall'host.
+```py
+from pathlib import Path
+import subprocess
+
+Path("wordpress").mkdir(parents=True, exist_ok=True)
+Path("db").mkdir(parents=True, exist_ok=True)
+
+dockerComposeUpD = ["docker-compose","up","-d","--force-recreate"]
+
+result = subprocess.run(
+    dockerComposeUpD,
+    capture_output=True,
+    text=True
+)
+
+print(f"┌─ Command: {' '.join(dockerComposeUpD)}")
+print(f"├─ Exit code: {result.returncode}")
+
+if result.stdout:
+        print("├─ stdout ────────────────────────────────────────────────")
+        for line in result.stdout.splitlines():
+            print(f"│ {line}")
+
+if result.stderr:
+        print("├─ stderr ────────────────────────────────────────────────")
+        for line in result.stderr.splitlines():
+            print(f"│ \033[31m{line}\033[0m")   # red for errors (ANSI color)
+```
+(Extra per completezza) File docker-compose
+```
+services:
+  
+  wordpress:
+    image: wordpress:6.9.1-php8.2-apache
+    restart: always
+    ports:
+      - 8088:80
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: exampleuser
+      WORDPRESS_DB_PASSWORD: examplepass
+      WORDPRESS_DB_NAME: exampledb
+    volumes:
+      - ./wordpress/wp-content:/var/www/html/wp-content
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: exampledb
+      MYSQL_USER: exampleuser
+      MYSQL_PASSWORD: examplepass
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - ./db:/var/lib/mysql
+
+volumes:
+  wordpress:
+  db:
+```
