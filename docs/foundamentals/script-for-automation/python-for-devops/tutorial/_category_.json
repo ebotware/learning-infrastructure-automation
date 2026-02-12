@@ -1,0 +1,8 @@
+{
+  "label": "Tutorial e guide Python",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Raccolta di tutorial e guide per eseguire codice Python"
+  }
+}
