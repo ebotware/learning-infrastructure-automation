@@ -6,7 +6,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'Learning Infrastructure Automation',
-  tagline: 'Raccolta di appunti riguardo il mio percorso di studio',
+  tagline: '',
   favicon: 'img/favicon.ico',
   deploymentBranch: "gh-pages",
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
