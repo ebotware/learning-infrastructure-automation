@@ -6,7 +6,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'Learning Infrastructure Automation',
-  tagline: '',
+  tagline: '', // TODO
   favicon: 'img/favicon.ico',
   deploymentBranch: "gh-pages",
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
