@@ -1,3 +1,6 @@
+---
+sidebar_position: 3
+---
 # PIP
 In questo capitolo verrà trattato il packet manager più popolare di Python, `pip`.
 
@@ -60,6 +63,10 @@ Per installare un package con `pip` digitare:
 pip install <nome del package>
 # Ad esempio
 pip install requests
+# Oppure se un package è su github
+pip install git+https://github.com/percorso/del/package
+# Editable mode, utile nel caso dobbiamo modificare il source code del package installato
+pip install -e <nome package>
 ```
 Per visualizzare il risultato eseguire
 ```sh
@@ -121,9 +128,32 @@ pytest==9.0.2
 ```
 
 ### Lockfile
-È anche utile creare un lockfile, con tutte le dipendenze (anche transitivi) bloccate. Così da avere una versione che sappiamo funziona con le dipendenze specificaten nel nostro applicativo. 
+È utile creare un lockfile, con tutte le dipendenze (anche transitive) bloccate, per descrivere uno stato sicuramente funzionante del nostro applicativo con i package selezionati.
 
+Per crearlo, basta copiare il file `requirements.txt` in `requirements_locked.txt` e sostituire `>=` in `==`
 ```
 cp requirements.txt requirements_locked.txt
 # Bloccare le dipdendenze cambiando >= in ==
 ```
+
+## Disinstallare un package
+Al contrario di altri package manager, pip non avvisa se un package usato come dipendenza da un'altro sta venendo disinstallato.
+
+Per questo motivo, prima di disinstallare un package, è consigliato eseguire `pip show <nome del package>` ed assicurarsi che il package non sia 
+richiesto. (linea `requires:`).
+
+Una volta effettuata questa verifica, eseguire:
+
+```sh
+# Disinstallare un pacakge
+pip uninstall <nome-del-package>
+
+# Per evitare di dover dare conferma
+pip uninstall <nome-del-package> -y
+```
+
+## Alternative
+Pip non è l'unico package manager disponibile in Python. Esistono altri package manager tra cui:
+
+* **uv (Astral)**, Installer, resolver, venv, script runner ultra veloce scritto in RUST. A quanto pare [molto apprezzato dalla community](https://www.reddit.com/r/Python/comments/1odnnrv/whats_the_best_package_manager_for_python_in_your/)
+* **Poetry**, gestore completo di dipendenze, venv e build/publish
