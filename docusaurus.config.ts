@@ -76,6 +76,11 @@ const config: Config = {
     colorMode: {
       respectPrefersColorScheme: true,
     },
+    prism:{
+      additionalLanguages:['powershell'],
+      theme: prismThemes.github,
+      darkTheme: prismThemes.dracula,
+    },
     navbar: {
       title: 'Learning Infrastructure Automation',
       logo: {
@@ -120,11 +125,6 @@ const config: Config = {
         },
       ],
       //copyright: `Copyright © ${new Date().getFullYear()} Learning Infrastructure Automation, Inc. Built with Docusaurus.`,
-    },
-  
-    prism: {
-      theme: prismThemes.github,
-      darkTheme: prismThemes.dracula,
     },
   } satisfies Preset.ThemeConfig,
 };

@@ -1,0 +1,8 @@
+{
+  "label": "Powershell per ambienti Windows/VMWare",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "In questo capitolo verrà trattato Powershell con focus particolare sugli ambienti Windows/VMWare"
+  }
+}
