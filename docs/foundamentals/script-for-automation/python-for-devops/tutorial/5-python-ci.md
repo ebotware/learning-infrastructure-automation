@@ -2,7 +2,7 @@
 sidebar_position: 5
 ---
 
-# CI/CD con Python
+# CI con Python
 In questo capitolo verranno trattati i concetti chiavi della Continuos Integration, in particolare come eseguire test, installare dipendenze e creare 
 virtual environments.
 
@@ -91,7 +91,7 @@ class TestCalculator:
         assert 2 == calculator.subtract(4, 2)
 ```
 
-Questa volta, eseguire pytest dovrebbe ritornare un output simile:
+Questa volta, eseguire pytest dovrebbe ritornare l'output seguente:
 
 ```
 collected 2 items                                                          
