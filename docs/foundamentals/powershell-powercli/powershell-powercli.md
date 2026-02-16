@@ -1,5 +1,5 @@
 ---
-sidebar_position: 3
+sidebar_position: 4
 ---
 
 
@@ -17,17 +17,14 @@ Si tratta di una collezione di **moduli PowerShell** sviluppati da VMware/Broadc
 - Reportistica, provisioning, configurazione bulk, monitoraggio e disaster recovery
 - Integrazione con vRealize, Horizon, NSX-T, Tanzu e altro
 
-PowerCLI trasforma PowerShell in uno strumento potentissimo per sysadmin e DevOps che lavorano con VMware: tutto ciò che fai nel vSphere Client (Web) lo puoi fare via script, in modo ripetibile, veloce e scalabile.
+PowerCLI trasforma PowerShell in uno strumento potente per sysadmin e DevOps che lavorano con VMware: tutto ciò che è possibile fare nel vSphere Client (Web) è possibile via script, in modo ripetibile, veloce e scalabile.
 
 **Versione attuale (2026)**: VCF.PowerCLI 9.x (o VMware.PowerCLI 13.3 come legacy/deprecato).  
 Il modulo legacy **VMware.PowerCLI** è deprecato → si raccomanda **VCF.PowerCLI** per ambienti moderni.
 
 ## Prerequisiti
 
-- **PowerShell** 7+ (consigliato) o PowerShell 5.1 (Windows integrato)
-  - Su Windows → già presente o scarica da GitHub
-  - Su Linux/macOS → installa PowerShell Core (`pwsh`)
-- Connessione Internet per installazione online (o offline con ZIP)
+- **PowerShell** 7+ (consigliato) o PowerShell 5.1
 - Permessi di lettura/scrittura sui moduli PowerShell
 - Account con privilegi su vCenter (almeno Read-Only per test)
 
@@ -42,30 +39,17 @@ Aprire PowerShell (o pwsh) come amministratore o utente normale:
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 # Installa il modulo attuale (VCF PowerCLI)
-Install-Module -Name VCF.PowerCLI -Scope CurrentUser -AllowClobber -Force
+Install-Module -Name VCF.PowerCLI -Scope CurrentUser 
 
 # Oppure la versione legacy (se serve compatibilità vecchia)
-# Install-Module -Name VMware.PowerCLI -Scope CurrentUser -AllowClobber -Force
+# Install-Module -Name VMware.PowerCLI -Scope CurrentUser
 ```
 
-- `-Scope CurrentUser` → installa solo per te (no admin rights necessari)
+- `-Scope CurrentUser` → installa solo per l'utente corrente (no admin rights necessari)
+
+Altri parametri utili:
 - `-AllowClobber` → sovrascrive eventuali conflitti
 - `-Force` → salta conferme
-
-### Metodo offline (air-gapped / senza Internet)
-
-1. Su una macchina con Internet:
-   ```powershell
-   Save-Module -Name VCF.PowerCLI -Path C:\Temp\PowerCLI
-   ```
-2. Copia la cartella in C:\Temp\PowerCLI sulla macchina target
-3. Sulla macchina target:
-   ```powershell
-   Copy-Item -Path "C:\Temp\PowerCLI\VCF.PowerCLI" -Destination "$env:USERPROFILE\Documents\PowerShell\Modules" -Recurse -Force
-   ```
-
-Oppure scarica il .zip ufficiale da:  
-https://developer.broadcom.com/tools/vcf-powercli/latest/
 
 ### Verifica installazione
 
@@ -77,9 +61,10 @@ Get-Module -Name VMware.PowerCLI -ListAvailable
 
 ## Primi comandi – Getting Started
 
-1. **Connettersi a vCenter Server** (obbligatorio prima di quasi tutto)
+1. **Connettersi a vCenter Server**
 
    ```powershell
+   Set-PowerCLIConfiguration -Scope User -ParticipateInCEIP $false
    Connect-VIServer -Server vcenter.miodominio.local -User tuo-utente@dominio -Password tua-password
    # O con prompt credenziali (più sicuro)
    Connect-VIServer -Server vcenter.miodominio.local
@@ -91,7 +76,7 @@ Get-Module -Name VMware.PowerCLI -ListAvailable
    Connect-VIServer -Server vcsa01.lab.local -Credential $cred -Protocol https
    ```
 
-2. **Elencare tutte le VM** (il "Get-Process" di VMware)
+2. **Elencare tutte le VM**
 
    ```powershell
    Get-VM

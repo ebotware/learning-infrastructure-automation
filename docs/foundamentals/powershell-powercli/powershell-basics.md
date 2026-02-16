@@ -6,12 +6,60 @@ sidebar_position: 1
 
 In questo capitolo verranno percorse le basi di Powershell
 
-## Versioni powershell
+## Caratteristiche principali
+- **Tutto è un oggetto** → non testi grezzi come in bash o cmd  
+  È possibile fare `Get-Process | Where-Object CPU -gt 500 | Stop-Process -WhatIf`
+- **Cmdlet** con naming verb-noun coerente (`Get-`, `Set-`, `New-`, `Remove-`, `Invoke-`…)
+- **Pipeline** basata su oggetti (non su stringhe)
+- **Remoting** nativo e sicuro (WinRM / SSH)
+- **Moduli** estendibili (Azure, Exchange, SharePoint, VMware, AWS, GitHub…)
+- **Cross-platform** e **open source** (licenza MIT) → repository su GitHub: [PowerShell/PowerShell](https://github.com/PowerShell/PowerShell)
 
-||Windows PowerShell 5.1|PowerShell 7|
-|-----------|----------------------|------------|
-|Piattaforme|Windows|Cross-Platform|
-|Sviluppo|Solo security fixes|Versione corrente - attivamente in sviluppo|
+
+## PowerShell vs Windows PowerShell vs PowerShell Core
+
+| Nome                          | Versione       | Runtime          | Piattaforme supportate          | Stato attuale (2026)          |
+|-------------------------------|----------------|------------------|----------------------------------|-------------------------------|
+| Windows PowerShell            | 5.1            | .NET Framework   | Solo Windows                    | **Supporto di sicurezza** fino a gennaio 2027 |
+| PowerShell (ex PowerShell Core) | 7.x – 7.5+   | .NET (Core / 8+) | Windows, Linux, macOS, ARM      | **Versione attiva e raccomandata** |
+
+### Installare Powershell 7 
+
+Qui sotto i passaggi per installare Powershell:
+
+
+#### Installare Powershell 7 su **Windows**
+
+Eseguire il comando per mostrare le versioni disponibili
+
+```powershell
+winget search --id Microsoft.PowerShell
+```
+
+Output:
+```
+Nome               Id                           Versione Origine
+-----------------------------------------------------------------
+PowerShell         Microsoft.PowerShell         7.5.4.0  winget
+PowerShell Preview Microsoft.PowerShell.Preview 7.6.0.6  winget
+```
+
+Installazione
+```powershell
+winget install --id Microsoft.PowerShell --source winget
+```
+
+
+#### Installare Powershell 7 su Linux (es: **Ubuntu**)
+
+```shell
+wget -q https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb
+rm packages-microsoft-prod.deb
+sudo apt update
+sudo apt install -y powershell
+```
+
 
 ## cmdlet
 
