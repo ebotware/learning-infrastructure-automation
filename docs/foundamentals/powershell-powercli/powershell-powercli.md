@@ -3,7 +3,7 @@ sidebar_position: 4
 ---
 
 
-# PowerCLI
+# Introduzione a PowerCLI
 L'interfaccia di comando per VMware vSphere
 
 ## Cos'è PowerCLI?
@@ -116,3 +116,4 @@ Get-Module -Name VMware.PowerCLI -ListAvailable
    ```powershell
    Get-Command -Name *Snapshot* -Module "VMware*"
    ```
+
