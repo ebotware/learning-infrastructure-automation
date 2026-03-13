@@ -51,6 +51,11 @@ https://realpython.com/courses/working-python-virtual-environments/
     python -m venv .\.myenv
     .\.myenv\Scripts\activate
     ```
+*   **Linux** - Per creare ed attivare un venv su **Linux** (testato in Ubuntu 24.04 LTS) eseguire:
+    ```bash
+    python3 -m venv .myvenv
+    source .\.myvenv\bin\activate
+    ```
 ## Introduzione a PIP
 
 Il Package manager di Python si chiama `pip`, ed è preinstallato nelle versioni più recenti di Python.
