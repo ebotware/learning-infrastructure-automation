@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# Introduzione a Microsoft Graph PowerShell SDK
+# Introduzione
 
 Microsoft Graph è l'**API unificata** di Microsoft 365 che permette di accedere a praticamente tutti i dati e le funzionalità di:
 
@@ -26,7 +26,7 @@ In pratica trasforma richieste HTTP come:
 
 ```http
 GET https://graph.microsoft.com/v1.0/users
-Authorization: Bearer eyJ0eXAiOiJKV1Qi...
+Authorization: Bearer eyJ0eXA...
 ```
 
 in comandi PowerShell molto più leggibili e naturali:

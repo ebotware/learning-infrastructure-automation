@@ -1,0 +1,8 @@
+{
+  "label": "Exchange Online Management",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "In questo capitolo verrà trattato Powershell con focus particolare sugli ambienti Windows/VMWare"
+  }
+}
